@@ -1,340 +1,66 @@
 #include "main.h"
 
+void print_buffer(char buffer[], int *buff_ind);
+
 /**
- * _printf - produces output according to a format
- * @format: format string containing the characters and the specifiers
- * Return: the number of characters printed (excluding the null byte)
+ * _printf - Custom printf function
+ * @format: format.
+ * Return: Printed chars.
  */
 int _printf(const char *format, ...)
 {
-    int count = 0;
-    va_list args;
+	int i, printed = 0, printed_chars = 0;
+	int flags, width, precision, size, buff_ind = 0;
+	va_list list;
+	char buffer[BUFF_SIZE];
 
-    va_start(args, format);
+	if (format == NULL)
+		return (-1);
 
-    while (*format)
-    {
-        if (*format == '%')
-        {
-            format++;
-            /*Parse and handle flags (0, -, +, space, #)*/
-            while (*format == '0' || *format == '-' || *format == '+' || *format == ' ' || *format == '#')
-            {
-                if (*format == ' ')
-                {
-                    /* Handle space character (ignore it)*/
-                }
-                else if (*format == '+')
-                {
-                    /* Handle + character (ignore it)*/
-                }
-                else if (*format == '#')
-                {
-                    /* Handle # character (ignore it)*/
-                }
-                format++;
-            }
+	va_start(list, format);
 
-            /* Parse and handle field width*/
-            if (*format >= '1' && *format <= '9')
-            {
-                while (*format >= '0' && *format <= '9')
-                {
-                    format++;
-                }
-            }
+	for (i = 0; format && format[i] != '\0'; i++)
+	{
+		if (format[i] != '%')
+		{
+			buffer[buff_ind++] = format[i];
+			if (buff_ind == BUFF_SIZE)
+				print_buffer(buffer, &buff_ind);
+			/* write(1, &format[i], 1);*/
+			printed_chars++;
+		}
+		else
+		{
+			print_buffer(buffer, &buff_ind);
+			flags = get_flags(format, &i);
+			width = get_width(format, &i, list);
+			precision = get_precision(format, &i, list);
+			size = get_size(format, &i);
+			++i;
+			printed = handle_print(format, &i, list, buffer,
+				flags, width, precision, size);
+			if (printed == -1)
+				return (-1);
+			printed_chars += printed;
+		}
+	}
 
-            /* Parse and handle precision*/
-            if (*format == '.')
-            {
-                format++;
-                while (*format >= '0' && *format <= '9')
-                {
-                    format++;
-                }
-            }
+	print_buffer(buffer, &buff_ind);
 
-            if (*format == 'l')
-            {
-                format++;
-            }
-            else if (*format == 'h')
-            {
-                format++;
-            }
+	va_end(list);
 
-            /* Handle conversion specifiers*/
-            if (*format == 'c')
-            {
-                char c = va_arg(args, int);
-                write(1, &c, 1);
-                count++;
-            }
-            else if (*format == 's')
-            {
-                char *str = va_arg(args, char *);
-                if (!str)
-                    str = "(null)";
-                while (*str)
-                {
-                    write(1, str, 1);
-                    str++;
-                    count++;
-                }
-            }
-            else if (*format == 'd' || *format == 'i')
-            {
-                int num = va_arg(args, int);
-                if (num < 0)
-                {
-                    write(1, "-", 1);
-                    count++;
-                    num = -num;
-                }
-                count += handle_integer(num);
-            }
-            else if (*format == 'u')
-            {
-                unsigned int num = va_arg(args, unsigned int);
-                count += handle_unsigned(num);
-            }
-            else if (*format == 'o')
-            {
-                unsigned int num = va_arg(args, unsigned int);
-                count += handle_octal(num);
-            }
-            else if (*format == 'x' || *format == 'X')
-            {
-                unsigned int num = va_arg(args, unsigned int);
-                count += handle_hex(num, (*format == 'X'));
-            }
-            else if (*format == 'p')
-            {
-                void *ptr = va_arg(args, void *);
-                count += handle_pointer(ptr);
-            }
-            else if (*format == 'S')
-            {
-                char *str = va_arg(args, char *);
-                count += handle_string_custom(str);
-            }
-            else if (*format == 'r')
-            {
-                char *str = va_arg(args, char *);
-                count += handle_reverse(str);
-            }
-            else if (*format == 'R')
-            {
-                char *str = va_arg(args, char *);
-                count += handle_rot13(str);
-            }
-
-            format++;
-        }
-        else
-        {
-            write(1, format, 1);
-            count++;
-            format++;
-        }
-    }
-
-    va_end(args);
-    return count;
+	return (printed_chars);
 }
 
 /**
- * handle_integer - Helper function to print integers
- * @num: The integer to print
- * Return: The number of characters printed
+ * print_buffer - Prints the contents of the buffer if it exist
+ * @buffer: Array of chars
+ * @buff_ind: Index at which to add next char, represents the length.
  */
-int handle_integer(int num)
+void print_buffer(char buffer[], int *buff_ind)
 {
-    int count = 0;
-    if (num / 10)
-    {
-        count += handle_integer(num / 10);
-    }
-    write(1, &num, 1);
-    count++;
-    return count;
-}
+	if (*buff_ind > 0)
+		write(1, &buffer[0], *buff_ind);
 
-/**
- * handle_binary - Helper function to print integers in binary
- * @num: The unsigned integer to print in binary
- * Return: The number of characters printed
- */
-int handle_binary(unsigned int num)
-{
-    int count = 0;
-    char digit;
-    if (num / 2)
-    {
-        count += handle_binary(num / 2);
-    }
-    digit = num % 2 + '0';
-    write(1, &digit, 1);
-    count++;
-    return count;
-}
-
-/**
- * handle_unsigned - Helper function to print unsigned integers
- * @num: The unsigned integer to print
- * Return: The number of characters printed
- */
-int handle_unsigned(unsigned int num)
-{
-    int count = 0;
-    if (num / 10)
-    {
-        count += handle_unsigned(num / 10);
-    }
-    write(1, &num, 1);
-    count++;
-    return count;
-}
-
-/**
- * handle_octal - Helper function to print integers in octal
- * @num: The unsigned integer to print in octal
- * Return: The number of characters printed
- */
-int handle_octal(unsigned int num)
-{
-    int count = 0;
-    char digit;
-    if (num / 8)
-    {
-        count += handle_octal(num / 8);
-    }
-    digit = num % 8 + '0';
-    write(1, &digit, 1);
-    count++;
-    return count;
-}
-
-/**
- * handle_hex - Helper function to print integers in hexadecimal
- * @num: The unsigned integer to print in hexadecimal
- * @uppercase: Whether to print in uppercase or lowercase
- * Return: The number of characters printed
- */
-int handle_hex(unsigned int num, int uppercase)
-{
-    int count = 0;
-    char digit;
-    if (num / 16)
-    {
-        count += handle_hex(num / 16, uppercase);
-    }
-    digit = num % 16;
-    if (digit < 10)
-    {
-        digit += '0';
-    }
-    else
-    {
-        if (uppercase)
-        {
-            digit += 'A' - 10;
-        }
-        else
-        {
-            digit += 'a' - 10;
-        }
-    }
-    write(1, &digit, 1);
-    count++;
-    return count;
-}
-
-/**
- * handle_pointer - Helper function to print pointers
- * @ptr: The pointer to print
- * Return: The number of characters printed
- */
-int handle_pointer(void *ptr)
-{
-    int count = 0;
-    write(1, "0x", 2);
-    count += 2;
-    if ((unsigned long)ptr == 0)
-    {
-        write(1, "0", 1);
-        count++;
-    }
-    else
-    {
-        count += handle_hex((unsigned long)ptr, 1);
-    }
-    return count;
-}
-
-/**
- * handle_string_custom - Helper function to print custom string format
- * 
-*/
-int handle_string_custom(char *str)
-{
-    int count = 0;
-    write(1, "0x", 2);
-    count += 2;
-    if ((unsigned long)str == 0)
-    {
-        write(1, "0", 1);
-        count++;
-    }
-    else
-    {
-        count += handle_hex((unsigned long)str, 1);
-    }
-    return count;
-}
-
-int handle_reverse(char *str)
-{
-    int count = 0;
-    if (!str)
-    {
-        str = "(null)";
-    }
-    while (*str)
-    {
-        str++;
-        count++;
-    }
-    while (count > 0)
-    {
-        str--;
-        write(1, str, 1);
-        count--;
-    }
-    return count;
-}
-
-int handle_rot13(char *str)
-{
-    int count = 0;
-    if (!str)
-    {
-        str = "(null)";
-    }
-    while (*str)
-    {
-        if ((*str >= 'A' && *str <= 'Z') || (*str >= 'a' && *str <= 'z'))
-        {
-            char offset = (*str >= 'A' && *str <= 'Z') ? 'A' : 'a';
-            char encoded = (*str - offset + 13) % 26 + offset;
-            write(1, &encoded, 1);
-        }
-        else
-        {
-            write(1, str, 1);
-        }
-        str++;
-        count++;
-    }
-    return count;
+	*buff_ind = 0;
 }
