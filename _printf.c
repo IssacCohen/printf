@@ -74,14 +74,7 @@ int _printf(const char *format, ...)
             else if (*format == 's')
             {
                 char *str = va_arg(args, char *);
-                if (!str)
-                    str = "(null)";
-                while (*str)
-                {
-                    write(1, str, 1);
-                    str++;
-                    count++;
-                }
+                count += handle_string(str);
             }
             else if (*format == 'd' || *format == 'i')
             {
@@ -382,4 +375,38 @@ int handle_rot13(char *str)
         count++;
     }
     return count;
+}
+/**
+ * handle_string - prints a string
+ * @str: string to be printer
+ * Return: length of the string
+*/
+{
+	char *null;
+
+	int count;
+
+	int i;
+
+	count = 0;
+
+	if (str == NULL)
+	{
+		null = "(null)";
+
+		for (i = 0; i < 6; i++)
+		{
+			_putchar(*null);
+			null++;
+		}
+		return (6);
+	}
+
+	while (*str)
+	{
+		_putchar(*str);
+		count++;
+		str++;
+	}
+	return (count);
 }

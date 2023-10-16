@@ -22,5 +22,6 @@ int handle_unsigned(unsigned int num);
 int handle_octal(unsigned int num);
 int handle_hex(unsigned int num, int uppercase);
 int handle_pointer(void *ptr);
+int handle_string(char *str);
 
 #endif /* !MAIN_H */
