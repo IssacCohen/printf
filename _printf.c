@@ -128,6 +128,16 @@ int _printf(const char *format, ...)
                 char *str = va_arg(args, char *);
                 count += handle_rot13(str);
             }
+	    else if (*format == 'b') {
+                unsigned int num = va_arg(args, unsigned int);
+                count += handle_binary(num);
+            }
+	    else if (*format == '%')
+            {
+                    write(1, "%", 1);
+                    count++;
+                    format++;
+            }
 
             format++;
         }
@@ -168,14 +178,17 @@ int handle_integer(int num)
 int handle_binary(unsigned int num)
 {
     int count = 0;
-    char digit;
-    if (num / 2)
-    {
-        count += handle_binary(num / 2);
+    char digit ;
+    if (num == 0) {
+        return count; 
     }
-    digit = num % 2 + '0';
+    
+    count += handle_binary(num / 2);
+
+    digit = (num % 2 == 0) ? '0' : '1';
     write(1, &digit, 1);
     count++;
+
     return count;
 }
 
