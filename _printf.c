@@ -3,7 +3,6 @@
 /**
  * _printf - produces output according to a format
  * @format: format string containing the characters and the specifiers
- * 
  * Return: the number of characters printed (excluding the null byte)
  */
 int _printf(const char *format, ...)
@@ -200,7 +199,6 @@ int handle_unsigned(unsigned int num)
 /**
  * handle_octal - Helper function to print integers in octal
  * @num: The unsigned integer to print in octal
- * 
  * Return: The number of characters printed
  */
 int handle_octal(unsigned int num)
@@ -221,7 +219,6 @@ int handle_octal(unsigned int num)
  * handle_hex - Helper function to print integers in hexadecimal
  * @num: The unsigned integer to print in hexadecimal
  * @uppercase: Whether to print in uppercase or lowercase
- * 
  * Return: The number of characters printed
  */
 int handle_hex(unsigned int num, int uppercase)
@@ -256,7 +253,6 @@ int handle_hex(unsigned int num, int uppercase)
 /**
  * handle_pointer - Helper function to print pointers
  * @ptr: The pointer to print
- * 
  * Return: The number of characters printed
  */
 int handle_pointer(void *ptr)
