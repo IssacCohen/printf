@@ -151,18 +151,11 @@ int _printf(const char *format, ...)
 int handle_integer(int num)
 {
     int count = 0;
-    if (num < 0)
-    {
-        write(1, "-", 1);
-        count++;
-        num = -num;
-    }
     if (num / 10)
     {
         count += handle_integer(num / 10);
     }
-    char digit = num % 10 + '0';
-    write(1, &digit, 1);
+    write(1, &num, 1);
     count++;
     return count;
 }
