@@ -280,9 +280,6 @@ int handle_pointer(void *ptr)
  * handle_string_custom - Helper function to print custom string format
  * 
 */
-/**
- * handle_string_custom - Helper function to print custom string format
- */
 int handle_string_custom(char *str)
 {
     int count = 0;
@@ -296,14 +293,15 @@ int handle_string_custom(char *str)
     {
         if (*str >= 32 && *str < 127)
         {
-            write(1, str, 1); // Print printable chars as it is
+            write(1, str, 1); // Print printable characters as is
         }
         else
         {
-            // Print non-printable chars in the specified format
-            write(1, "\\x", 2);
-            count += 2;
-            count += handle_hex(*str, 1); // Print the chars's ASCII code in hexadecimal
+            // Print non-printable characters in the specified format
+            char hex[4];
+            sprintf(hex, "\\x%02X", (unsigned char)*str);
+            write(1, hex, 4);
+            count += 4;
         }
         str++;
         count++;
