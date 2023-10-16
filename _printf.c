@@ -306,18 +306,23 @@ int handle_pointer(void *ptr)
 int handle_string_custom(char *str)
 {
     int count = 0;
+
     if (!str)
     {
-        str = "(null)";
+        write(1, "(null)", 6);
+        return 6;
     }
-    
+
     while (*str)
     {
         if (*str < 32 || *str >= 127)
         {
-            write(1, "\\x", 2);  // Write "\x" to standard output
-            count += 2;
-            count += handle_hex((unsigned char)*str);
+            char hex[3];
+            hex[0] = '\\';
+            hex[1] = "0123456789ABCDEF"[(*str >> 4) & 0xF];
+            hex[2] = "0123456789ABCDEF"[*str & 0xF];
+            write(1, hex, 3);
+            count += 3;
         }
         else
         {
@@ -329,6 +334,7 @@ int handle_string_custom(char *str)
 
     return count;
 }
+
 /**
  * handle_reverse - Reverses and prints a string
  * @str: The string to reverse and print
