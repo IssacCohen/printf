@@ -172,36 +172,14 @@ int handle_integer(int num)
 int handle_binary(unsigned int num)
 {
     int count = 0;
-    int bits = 0;
-    unsigned int temp = num;
-
-    while (temp > 0) {
-        temp >>= 1;
-        bits++;
+    char digit;
+    if (num / 2)
+    {
+        count += handle_binary(num / 2);
     }
-
-    if (bits == 0) {
-        write(1, "0", 1);
-        return 1;
-    }
-
-    char* binary = (char*)malloc(bits);
-    if (!binary) {
-        return 0;  // Error handling for memory allocation failure
-    }
-
-    for (int i = bits - 1; i >= 0; i--) {
-        binary[i] = (num & 1) + '0';
-        num >>= 1;
-    }
-
-    for (int i = 0; i < bits; i++) {
-        write(1, &binary[i], 1);
-        count++;
-    }
-
-    free(binary);
-
+    digit = num % 2 + '0';
+    write(1, &digit, 1);
+    count++;
     return count;
 }
 
