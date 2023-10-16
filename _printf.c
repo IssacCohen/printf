@@ -127,10 +127,6 @@ int _printf(const char *format, ...)
             {
                 char *str = va_arg(args, char *);
                 count += handle_rot13(str);
-            }            
-            else if (*format == 'b') {  // Handle %b
-                unsigned int num = va_arg(args, unsigned int);
-                count += handle_binary(num);
             }
 
             format++;
@@ -172,12 +168,11 @@ int handle_integer(int num)
 int handle_binary(unsigned int num)
 {
     int count = 0;
-    char digit;
     if (num / 2)
     {
         count += handle_binary(num / 2);
     }
-    digit = num % 2 + '0';
+    char digit = num % 2 + '0';
     write(1, &digit, 1);
     count++;
     return count;
@@ -208,12 +203,11 @@ int handle_unsigned(unsigned int num)
 int handle_octal(unsigned int num)
 {
     int count = 0;
-    char digit;
     if (num / 8)
     {
         count += handle_octal(num / 8);
     }
-    digit = num % 8 + '0';
+    char digit = num % 8 + '0';
     write(1, &digit, 1);
     count++;
     return count;
@@ -228,12 +222,11 @@ int handle_octal(unsigned int num)
 int handle_hex(unsigned int num, int uppercase)
 {
     int count = 0;
-    char digit;
     if (num / 16)
     {
         count += handle_hex(num / 16, uppercase);
     }
-    digit = num % 16;
+    char digit = num % 16;
     if (digit < 10)
     {
         digit += '0';
@@ -296,44 +289,27 @@ int handle_string_custom(char *str)
     }
     return count;
 }
-/**
- * handle_reverse - Reverses and prints a string
- * @str: The string to reverse and print
- *
- * Return: The number of characters printed
- */
 
 int handle_reverse(char *str)
 {
-    int i;
     int count = 0;
-    int length;
     if (!str)
     {
         str = "(null)";
     }
-    
-    length = 0;
-    while (str[length] != '\0')
+    while (*str)
     {
-        length++;
-    }
-
-    for (i = length - 1; i >= 0; i--)
-    {
-        write(1, &str[i], 1);
+        str++;
         count++;
     }
-
+    while (count > 0)
+    {
+        str--;
+        write(1, str, 1);
+        count--;
+    }
     return count;
 }
-
-/**
- * handle_rot13 - Applies ROT13 encoding to a string and prints it
- * @str: The string to apply ROT13 to and print
- *
- * Return: The number of characters printed
- */
 
 int handle_rot13(char *str)
 {
