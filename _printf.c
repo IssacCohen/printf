@@ -12,15 +12,58 @@ int _printf(const char *format, ...)
 
     va_start(args, format);
 
- 
     while (*format)
     {
         if (*format == '%')
         {
             format++;
-            if (*format == '\0')
-                break; // Break if format ends with '%'
+            /*Parse and handle flags (0, -, +, space, #)*/
+            while (*format == '0' || *format == '-' || *format == '+' || *format == ' ' || *format == '#')
+            {
+                if (*format == ' ')
+                {
+                    /* Handle space character (ignore it)*/
+                }
+                else if (*format == '+')
+                {
+                    /* Handle + character (ignore it)*/
+                }
+                else if (*format == '#')
+                {
+                    /* Handle # character (ignore it)*/
+                }
+                format++;
+            }
 
+            /* Parse and handle field width*/
+            if (*format >= '1' && *format <= '9')
+            {
+                while (*format >= '0' && *format <= '9')
+                {
+                    format++;
+                }
+            }
+
+            /* Parse and handle precision*/
+            if (*format == '.')
+            {
+                format++;
+                while (*format >= '0' && *format <= '9')
+                {
+                    format++;
+                }
+            }
+
+            if (*format == 'l')
+            {
+                format++;
+            }
+            else if (*format == 'h')
+            {
+                format++;
+            }
+
+            /* Handle conversion specifiers*/
             if (*format == 'c')
             {
                 char c = va_arg(args, int);
@@ -39,21 +82,62 @@ int _printf(const char *format, ...)
                     count++;
                 }
             }
-            else if (*format == '%')
+            else if (*format == 'd' || *format == 'i')
             {
-                write(1, "%", 1);
-                count++;
+                int num = va_arg(args, int);
+                if (num < 0)
+                {
+                    write(1, "-", 1);
+                    count++;
+                    num = -num;
+                }
+                count += handle_integer(num);
             }
+            else if (*format == 'u')
+            {
+                unsigned int num = va_arg(args, unsigned int);
+                count += handle_unsigned(num);
+            }
+            else if (*format == 'o')
+            {
+                unsigned int num = va_arg(args, unsigned int);
+                count += handle_octal(num);
+            }
+            else if (*format == 'x' || *format == 'X')
+            {
+                unsigned int num = va_arg(args, unsigned int);
+                count += handle_hex(num, (*format == 'X'));
+            }
+            else if (*format == 'p')
+            {
+                void *ptr = va_arg(args, void *);
+                count += handle_pointer(ptr);
+            }
+            else if (*format == 'S')
+            {
+                char *str = va_arg(args, char *);
+                count += handle_string_custom(str);
+            }
+            else if (*format == 'r')
+            {
+                char *str = va_arg(args, char *);
+                count += handle_reverse(str);
+            }
+            else if (*format == 'R')
+            {
+                char *str = va_arg(args, char *);
+                count += handle_rot13(str);
+            }
+
+            format++;
         }
         else
         {
             write(1, format, 1);
             count++;
+            format++;
         }
-
-        format++;
     }
-
 
     va_end(args);
     return count;
