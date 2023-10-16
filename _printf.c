@@ -3,7 +3,6 @@
 /**
  * _printf - produces output according to a format
  * @format: format string containing the characters and the specifiers
- *
  * Return: the number of characters printed (excluding the null byte)
  */
 int _printf(const char *format, ...)
