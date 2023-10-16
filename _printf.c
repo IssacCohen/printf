@@ -283,30 +283,17 @@ int handle_pointer(void *ptr)
 int handle_string_custom(char *str)
 {
     int count = 0;
-
-    if (!str)
+    write(1, "0x", 2);
+    count += 2;
+    if ((unsigned long)str == 0)
     {
-        str = "(null)";
-    }
-
-    while (*str)
-    {
-        if (*str >= 32 && *str < 127)
-        {
-            write(1, str, 1); // Print printable characters as is
-        }
-        else
-        {
-            // Print non-printable characters in the specified format
-            char hex[4];
-            sprintf(hex, "\\x%02X", (unsigned char)*str);
-            write(1, hex, 4);
-            count += 4;
-        }
-        str++;
+        write(1, "0", 1);
         count++;
     }
-
+    else
+    {
+        count += handle_hex((unsigned long)str, 1);
+    }
     return count;
 }
 
