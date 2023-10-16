@@ -212,11 +212,13 @@ int handle_binary(unsigned int num)
 int handle_unsigned(unsigned int num)
 {
     int count = 0;
+    char digit;
     if (num / 10)
     {
         count += handle_unsigned(num / 10);
     }
-    write(1, &num, 1);
+    digit = num % 10 + '0';
+    write(1, &digit, 1);
     count++;
     return count;
 }
