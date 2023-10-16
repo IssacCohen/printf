@@ -292,27 +292,44 @@ int handle_string_custom(char *str)
     }
     return count;
 }
+/**
+ * handle_reverse - Reverses and prints a string
+ * @str: The string to reverse and print
+ *
+ * Return: The number of characters printed
+ */
 
 int handle_reverse(char *str)
 {
+    int i;
     int count = 0;
+    int length;
     if (!str)
     {
         str = "(null)";
     }
-    while (*str)
+    
+    length = 0;
+    while (str[length] != '\0')
     {
-        str++;
+        length++;
+    }
+
+    for (i = length - 1; i >= 0; i--)
+    {
+        write(1, &str[i], 1);
         count++;
     }
-    while (count > 0)
-    {
-        str--;
-        write(1, str, 1);
-        count--;
-    }
+
     return count;
 }
+
+/**
+ * handle_rot13 - Applies ROT13 encoding to a string and prints it
+ * @str: The string to apply ROT13 to and print
+ *
+ * Return: The number of characters printed
+ */
 
 int handle_rot13(char *str)
 {
