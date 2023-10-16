@@ -306,17 +306,27 @@ int handle_pointer(void *ptr)
 int handle_string_custom(char *str)
 {
     int count = 0;
-    write(1, "0x", 2);
-    count += 2;
-    if ((unsigned long)str == 0)
+    if (!str)
     {
-        write(1, "0", 1);
-        count++;
+        str = "(null)";
     }
-    else
+    
+    while (*str)
     {
-        count += handle_hex((unsigned long)str, 1);
+        if (*str < 32 || *str >= 127)
+        {
+            write(1, "\\x", 2);  // Write "\x" to standard output
+            count += 2;
+            count += handle_hex((unsigned char)*str);
+        }
+        else
+        {
+            write(1, str, 1);
+            count++;
+        }
+        str++;
     }
+
     return count;
 }
 /**
