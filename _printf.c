@@ -128,10 +128,11 @@ int _printf(const char *format, ...)
                 char *str = va_arg(args, char *);
                 count += handle_rot13(str);
             }
-	    else if (*format == 'b') {
+	    else if (*format == 'b') 
+	    {
                 unsigned int num = va_arg(args, unsigned int);
                 count += handle_binary(num);
-            }
+	    }
 	    else if (*format == '%')
             {
                     write(1, "%", 1);
