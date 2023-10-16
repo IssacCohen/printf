@@ -17,17 +17,8 @@ int _printf(const char *format, ...)
         if (*format == '%')
         {
             format++;
-            int zero_flag = 0; 
-
-            
-            if (*format == '0')
-            {
-                zero_flag = 1;
-                format++;
-            }
-
-	    /*Parse and handle flags (0, -, +, space, #)*/
-	    while (*format == '0' || *format == '-' || *format == '+' || *format == ' ' || *format == '#')
+            /*Parse and handle flags (0, -, +, space, #)*/
+            while (*format == '0' || *format == '-' || *format == '+' || *format == ' ' || *format == '#')
             {
                 if (*format == ' ')
                 {
@@ -45,12 +36,10 @@ int _printf(const char *format, ...)
             }
 
             /* Parse and handle field width*/
-   	    int field_width = 0;
-            if (*format >= '0' && *format <= '9')
+            if (*format >= '1' && *format <= '9')
             {
                 while (*format >= '0' && *format <= '9')
                 {
-                    field_width = field_width * 10 + (*format - '0');
                     format++;
                 }
             }
@@ -102,7 +91,7 @@ int _printf(const char *format, ...)
                     count++;
                     num = -num;
                 }
-                count += handle_integer(num, zero_flag, field_width);
+                count += handle_integer(num);
             }
             else if (*format == 'u')
             {
@@ -169,35 +158,15 @@ int _printf(const char *format, ...)
  * @num: The integer to print
  * Return: The number of characters printed
  */
-
-int handle_integer(int num, int zero_flag, int field_width)
+int handle_integer(int num)
 {
     int count = 0;
-    if (num < 0)
-    {
-        write(1, "-", 1);
-        count++;
-        num = -num;
-        field_width--; // Decrease field width for the negative sign
-    }
-
-    // Handle zero padding
-    while (field_width > 1)
-    {
-        write(1, (zero_flag ? "0" : " "), 1);
-        count++;
-        field_width--;
-    }
-
     if (num / 10)
     {
-        count += handle_integer(num / 10, zero_flag, field_width - 1);
+        count += handle_integer(num / 10);
     }
-
-    char digit = num % 10 + '0';
-    write(1, &digit, 1);
+    write(1, &num, 1);
     count++;
-
     return count;
 }
 
