@@ -137,7 +137,6 @@ int _printf(const char *format, ...)
             {
                     write(1, "%", 1);
                     count++;
-                    format++;
             }
 
             format++;
