@@ -127,6 +127,10 @@ int _printf(const char *format, ...)
             {
                 char *str = va_arg(args, char *);
                 count += handle_rot13(str);
+            }            
+            else if (*format == 'b') {  // Handle %b
+                unsigned int num = va_arg(args, unsigned int);
+                count += handle_binary(num);
             }
 
             format++;
@@ -168,14 +172,36 @@ int handle_integer(int num)
 int handle_binary(unsigned int num)
 {
     int count = 0;
-    char digit;
-    if (num / 2)
-    {
-        count += handle_binary(num / 2);
+    int bits = 0;
+    unsigned int temp = num;
+
+    while (temp > 0) {
+        temp >>= 1;
+        bits++;
     }
-    digit = num % 2 + '0';
-    write(1, &digit, 1);
-    count++;
+
+    if (bits == 0) {
+        write(1, "0", 1);
+        return 1;
+    }
+
+    char* binary = (char*)malloc(bits);
+    if (!binary) {
+        return 0;  // Error handling for memory allocation failure
+    }
+
+    for (int i = bits - 1; i >= 0; i--) {
+        binary[i] = (num & 1) + '0';
+        num >>= 1;
+    }
+
+    for (int i = 0; i < bits; i++) {
+        write(1, &binary[i], 1);
+        count++;
+    }
+
+    free(binary);
+
     return count;
 }
 
