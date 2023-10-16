@@ -3,6 +3,7 @@
 /**
  * _printf - produces output according to a format
  * @format: format string containing the characters and the specifiers
+ * 
  * Return: the number of characters printed (excluding the null byte)
  */
 int _printf(const char *format, ...)
@@ -199,6 +200,7 @@ int handle_unsigned(unsigned int num)
 /**
  * handle_octal - Helper function to print integers in octal
  * @num: The unsigned integer to print in octal
+ * 
  * Return: The number of characters printed
  */
 int handle_octal(unsigned int num)
@@ -219,6 +221,7 @@ int handle_octal(unsigned int num)
  * handle_hex - Helper function to print integers in hexadecimal
  * @num: The unsigned integer to print in hexadecimal
  * @uppercase: Whether to print in uppercase or lowercase
+ * 
  * Return: The number of characters printed
  */
 int handle_hex(unsigned int num, int uppercase)
@@ -253,6 +256,7 @@ int handle_hex(unsigned int num, int uppercase)
 /**
  * handle_pointer - Helper function to print pointers
  * @ptr: The pointer to print
+ * 
  * Return: The number of characters printed
  */
 int handle_pointer(void *ptr)
@@ -276,22 +280,38 @@ int handle_pointer(void *ptr)
  * handle_string_custom - Helper function to print custom string format
  * 
 */
+/**
+ * handle_string_custom - Helper function to print custom string format
+ */
 int handle_string_custom(char *str)
 {
     int count = 0;
-    write(1, "0x", 2);
-    count += 2;
-    if ((unsigned long)str == 0)
+
+    if (!str)
     {
-        write(1, "0", 1);
+        str = "(null)";
+    }
+
+    while (*str)
+    {
+        if (*str >= 32 && *str < 127)
+        {
+            write(1, str, 1); // Print printable chars as it is
+        }
+        else
+        {
+            // Print non-printable chars in the specified format
+            write(1, "\\x", 2);
+            count += 2;
+            count += handle_hex(*str, 1); // Print the chars's ASCII code in hexadecimal
+        }
+        str++;
         count++;
     }
-    else
-    {
-        count += handle_hex((unsigned long)str, 1);
-    }
+
     return count;
 }
+
 /**
  * handle_reverse - Reverses and prints a string
  * @str: The string to reverse and print
