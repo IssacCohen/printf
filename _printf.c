@@ -178,19 +178,31 @@ int handle_integer(int num)
 int handle_binary(unsigned int num)
 {
     int count = 0;
-    char digit ;
-    if (num == 0) {
-        return count; 
-    }
-    
-    count += handle_binary(num / 2);
+    char binary[32]; 
+    int i = 0;
 
-    digit = (num % 2 == 0) ? '0' : '1';
-    write(1, &digit, 1);
-    count++;
+    if (num == 0)
+    {
+        write(1, "0", 1);
+        count++;
+        return count;
+    }
+
+    while (num > 0)
+    {
+        binary[i++] = (num % 2) + '0';
+        num /= 2;
+    }
+
+    for (i--; i >= 0; i--)
+    {
+        write(1, &binary[i], 1);
+        count++;
+    }
 
     return count;
 }
+
 
 /**
  * handle_unsigned - Helper function to print unsigned integers
