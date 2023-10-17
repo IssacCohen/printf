@@ -170,14 +170,35 @@ int _printf(const char *format, ...)
 int handle_integer(int num)
 {
     int count = 0;
-    if (num / 10)
-    {
-        count += handle_integer(num / 10);
+    char buffer[20];  /* A buffer to hold the string representation of the integer*/
+
+    if (num == 0) {
+        write(1, "0", 1);
+        return 1;
     }
-    write(1, &num, 1);
-    count++;
+
+    if (num < 0) {
+        write(1, "-", 1);
+        num = -num;
+        count++;
+    }
+
+    int i = 0;
+    while (num > 0) {
+        buffer[i] = num % 10 + '0';
+        num /= 10;
+        i++;
+    }
+
+    while (i > 0) {
+        write(1, &buffer[i - 1], 1);
+        count++;
+        i--;
+    }
+
     return count;
 }
+
 
 /**
  * handle_binary - Helper function to print integers in binary
