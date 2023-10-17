@@ -5,6 +5,7 @@
  * @format: format string containing the characters and the specifiers
  * Return: the number of characters printed (excluding the null byte)
  */
+
 int _printf(const char *format, ...)
 {
     int count = 0;
@@ -167,35 +168,16 @@ int _printf(const char *format, ...)
  * @num: The integer to print
  * Return: The number of characters printed
  */
+
 int handle_integer(int num)
 {
     int count = 0;
-    
-    if (num == 0)
+    if (num / 10)
     {
-        write(1, "0", 1);
-        count++;
-        return count;
+        count += handle_integer(num / 10);
     }
-
-    if (num < 0)
-    {
-        // Handle negative numbers
-        write(1, "-", 1);
-        count++;
-        num = -num;
-    }
-    
-    // Handle positive numbers, avoiding overflow
-    char buffer[12]; // 11 digits for INT_MAX + 1 for '\0'
-    int printed = snprintf(buffer, sizeof(buffer), "%d", num);
-
-    if (printed > 0)
-    {
-        write(1, buffer, printed);
-        count += printed;
-    }
-
+    write(1, &num, 1);
+    count++;
     return count;
 }
 
@@ -204,6 +186,7 @@ int handle_integer(int num)
  * @num: The unsigned integer to print in binary
  * Return: The number of characters printed
  */
+
 int handle_binary(unsigned int num)
 {
     int count = 0;
@@ -238,6 +221,7 @@ int handle_binary(unsigned int num)
  * @num: The unsigned integer to print
  * Return: The number of characters printed
  */
+
 int handle_unsigned(unsigned int num)
 {
     int count = 0;
@@ -257,6 +241,7 @@ int handle_unsigned(unsigned int num)
  * @num: The unsigned integer to print in octal
  * Return: The number of characters printed
  */
+
 int handle_octal(unsigned int num)
 {
     int count = 0;
@@ -277,6 +262,7 @@ int handle_octal(unsigned int num)
  * @uppercase: Whether to print in uppercase or lowercase
  * Return: The number of characters printed
  */
+
 int handle_hex(unsigned int num, int uppercase)
 {
     int count = 0;
@@ -311,6 +297,7 @@ int handle_hex(unsigned int num, int uppercase)
  * @ptr: The pointer to print
  * Return: The number of characters printed
  */
+
 int handle_pointer(void *ptr)
 {
     int count = 0;
@@ -332,6 +319,7 @@ int handle_pointer(void *ptr)
  * handle_string_custom - Helper function to print custom string format
  * 
 */
+
 int handle_string_custom(char *str)
 {
     int count = 0;
