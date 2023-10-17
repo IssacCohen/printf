@@ -170,12 +170,32 @@ int _printf(const char *format, ...)
 int handle_integer(int num)
 {
     int count = 0;
-    if (num / 10)
+    
+    if (num == 0)
     {
-        count += handle_integer(num / 10);
+        write(1, "0", 1);
+        count++;
+        return count;
     }
-    write(1, &num, 1);
-    count++;
+
+    if (num < 0)
+    {
+        // Handle negative numbers
+        write(1, "-", 1);
+        count++;
+        num = -num;
+    }
+    
+    // Handle positive numbers, avoiding overflow
+    char buffer[12]; // 11 digits for INT_MAX + 1 for '\0'
+    int printed = snprintf(buffer, sizeof(buffer), "%d", num);
+
+    if (printed > 0)
+    {
+        write(1, buffer, printed);
+        count += printed;
+    }
+
     return count;
 }
 
