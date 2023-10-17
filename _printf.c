@@ -67,9 +67,18 @@ int _printf(const char *format, ...)
             if (*format == 'c')
             {
                 char c = va_arg(args, int);
-                write(1, &c, 1);
-                count++;
-            }
+                if (c < 0)
+                   {
+                     write(1, "Error: Invalid argument for %c", 30);
+                     count += 27;
+                   }
+                else
+                   {
+		     write(1, &c, 1);
+                     count++;
+		   }
+
+	    }
             else if (*format == 's')
             {
                 char *str = va_arg(args, char *);
