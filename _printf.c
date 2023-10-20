@@ -39,7 +39,7 @@ int _printf(const char *format, ...)
 {
 	register int len = 0;
 	int (*f)(va_list, flags_t *);
-	flags_t flags = {0, 0, 0, 0, 0, 0};
+	flags_t flags = {0, 0, 0};
 
 	va_list form;
 
