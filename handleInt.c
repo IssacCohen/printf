@@ -43,7 +43,6 @@ void print_number(int n)
 	_putchar((n1 % 10) + '0');
 }
 
-
 /**
  * handleInt - prints an int
  * @form: va_list of arg
@@ -55,24 +54,48 @@ int handleInt(va_list form, flags_t *f)
 	int n = va_arg(form, int);
 	int res = count_digit(n);
 
-	if (f->space == 1 && f->plus == 0 && n >= 0)
-		res += _putchar(' ');
-	if (f->plus == 1 && n >= 0)
-		res += _putchar('+');
-	if (n <= 0)
-		res++;
-	print_number(n);
-	return (res);
+	if (f->minus == 1) {
+		if (f->space == 1 && f->plus == 0 && n >= 0)
+			res += _putchar(' ');
+		if (f->plus == 1 && n >= 0)
+			res += _putchar('+');
+		if (n <= 0)
+			res++;
+		print_number(n);
+		
+
+		while (res < f->width) {
+			res += _putchar(' ');
+		}
+	} else {
+		if (f->space == 1 && f->plus == 0 && n >= 0)
+			res += _putchar(' ');
+		if (f->plus == 1 && n >= 0)
+			res += _putchar('+');
+		if (n <= 0)
+			res++;
+		
+
+		while (res < f->width) {
+			if (f->zero == 1) {
+
+				_putchar('0');
+			} else {
+				_putchar(' ');
+			}
+			res++;
+		}
+		print_number(n);
+	}
+	
+	return res;
 }
-
-
-
 
 /**
  * get_flag - check flag
  * @s: char flag
  * @f: pointer to the struct
- * Return: 1 if flags , 0
+ * Return: 1 if flags, 0
  */
 int get_flag(char s, flags_t *f)
 {
@@ -90,6 +113,10 @@ int get_flag(char s, flags_t *f)
 			break;
 		case '#':
 			f->hash = 1;
+			i = 1;
+			break;
+		case '-':
+			f->minus = 1; 
 			i = 1;
 			break;
 	}
